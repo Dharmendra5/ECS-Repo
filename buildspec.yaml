@@ -1,0 +1,38 @@
+version: 0.2
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - echo $AWS_DEFAULT_REGION
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin 784582181785.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      - REPOSITORY_NAME="ecstestimagerepo"      
+      - REPOSITORY_URI=784582181785.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$REPOSITORY_NAME
+  build:
+    commands:
+      # Testing the app code using Rspec
+      - echo testing frontend application using rspec
+      - docker build -t $REPOSITORY_NAME:rails-test-rspec -f 3-CICD/docker/frontend/test-rspec/app/dockerfile .
+      # Create container from docker image to perform Rspec test case
+      - docker run --rm $REPOSITORY_NAME:rails-test-rspec
+      # Check the exit code of the previous command
+      - if [ $? -ne 0 ]; then exit 1; fi
+
+      ## Testing the app code using Rubocop
+      #- echo testing frontend app using Rubocop
+      #- docker build -t $REPOSITORY_NAME:rails-test-rubo -f 3-CICD/docker/frontend/test-rubo/app/dockerfile .
+      ## Create container from docker image to perform Rspec test case
+      #- docker run --rm $REPOSITORY_NAME:rails-test-rubo
+      ## Check the exit code of the previous command
+      #- if [ $? -ne 0 ]; then exit 1; fi
+
+      # Build and push image once test cases passed
+      - echo building frontend - tagging and pushing docker image.
+      - docker build -t $REPOSITORY_NAME:rails -f 3-CICD/docker/frontend/app/dockerfile .
+      - docker tag $REPOSITORY_NAME:rails $REPOSITORY_URI:rails-${CODEBUILD_BUILD_NUMBER}
+      - docker push $REPOSITORY_URI:rails-${CODEBUILD_BUILD_NUMBER}
+  post_build:
+    commands:
+      - printf '[{"name":"ECS-Rails","imageUri":"%s"}]' $REPOSITORY_URI:rails-${CODEBUILD_BUILD_NUMBER} > imagedefinitions.json
+  
+artifacts:
+  files: imagedefinitions.json

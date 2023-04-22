@@ -1,0 +1,9 @@
+variable "region"           {}
+variable "cc-repo-name"     {}
+variable "cc-branch-name"   {}
+variable "bucket"           {}
+variable "build-project"    {}
+variable "pipeline-name"    {}
+variable "ecs-cluster-name" {}
+variable "ecs-service-name" {}
+variable "account-id"       {}

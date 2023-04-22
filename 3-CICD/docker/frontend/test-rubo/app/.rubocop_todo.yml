@@ -1,0 +1,10 @@
+Layout/EmptyLines:
+  Exclude:
+       - '3-CICD/docker/frontend/app/config/environments/development.rb'
+
+Layout/TrailingEmptyLines:
+  Exclude:
+    - '3-CICD/docker/frontend/app/app/models/user.rb'
+
+Metrics/MethodLength:
+  Max: 1

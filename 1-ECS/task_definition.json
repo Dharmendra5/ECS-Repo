@@ -1,0 +1,30 @@
+[
+    {
+       "name": "ECS-Rails",
+       "image": "784582181785.dkr.ecr.us-east-2.amazonaws.com/ecstestimagerepo:rails-55",
+        "cpu": 1000,
+        "memory": 2000,
+        "logConfiguration": {
+          "logDriver": "awslogs",
+          "options": {
+            "awslogs-group": "ECS-TestCloudwatch",
+            "awslogs-region": "us-east-2",
+            "awslogs-stream-prefix": "ecs"
+          }
+        },
+        "links": [],
+        "portMappings": [
+            { 
+                "hostPort": 3000,
+                "containerPort": 3000,
+                "protocol": "tcp"
+            }
+        ],
+        "essential": true,
+        "entryPoint": [],
+        "command": [],
+        "environment": [],
+        "mountPoints": [],
+        "volumesFrom": []
+    }
+  ]

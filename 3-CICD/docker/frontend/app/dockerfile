@@ -1,0 +1,12 @@
+FROM public.ecr.aws/docker/library/ruby:3.0
+RUN apt-get update && apt-get install -y nodejs
+WORKDIR /app
+RUN bundle init
+RUN bundle install
+RUN gem install rails bundler
+RUN gem install aws-healthcheck
+RUN gem update --system
+COPY 3-CICD/docker/frontend/app/ .
+RUN bundle update --bundler
+EXPOSE 3000
+CMD ["rails", "server", "-b", "0.0.0.0"]
